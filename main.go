@@ -17,7 +17,7 @@ func main() {
 
 	redisURL := os.Getenv("REDIS_URL")
 	if len(redisURL) == 0 {
-		redisURL = "redis://:@localhost:6370/1"
+		redisURL = "redis://:@localhost:6379/1"
 	}
 
 	redisOptions, err := redis.ParseURL(redisURL)
