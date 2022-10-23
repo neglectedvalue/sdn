@@ -113,7 +113,7 @@ func (s *Server) handleGet(w http.ResponseWriter, r *http.Request) {
 		note,
 	)
 	if err != nil {
-		s.badRequest(w, r, http.StatusNotFound, fmt.Sprint("Note with ID %s does not exist.", noteId))
+		s.badRequest(w, r, http.StatusNotFound, fmt.Sprintf("Note with ID %s does not exist.", noteId))
 		return
 	}
 
