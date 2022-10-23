@@ -104,11 +104,30 @@ func (s *Server) handleGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	noteId := strings.TrimPrefix(path, "/")
+
+	ctx := r.Context()
+	note := &Note{}
+	err := s.RedisCache.GetSkippingLocalCache(
+		ctx,
+		noteId,
+		note,
+	)
+	if err != nil {
+		s.badRequest(w, r, http.StatusNotFound, fmt.Sprint("Note with ID %s does not exist.", noteId))
+		return
+	}
+
+	if note.Destruct {
+		err := s.RedisCache.Delete(ctx, noteId)
+		if err != nil {
+			fmt.Println(err)
+			s.serverError(w, r)
+			return
+		}
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(
-		fmt.Sprintf(
-			"You requested note with ID '%s'",
-			noteId)))
+	w.Write(note.Data)
 }
 
 func (s *Server) renderMessage(
